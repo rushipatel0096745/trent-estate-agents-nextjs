@@ -68,6 +68,11 @@ export interface Config {
   blocks: {};
   collections: {
     users: User;
+    properties: Property;
+    guides: Guide;
+    pages: Page;
+    'team-members': TeamMember;
+    testimonials: Testimonial;
     media: Media;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -77,6 +82,11 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
+    properties: PropertiesSelect<false> | PropertiesSelect<true>;
+    guides: GuidesSelect<false> | GuidesSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
+    'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -84,7 +94,7 @@ export interface Config {
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   fallbackLocale: null;
   globals: {};
@@ -122,7 +132,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -130,6 +140,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -144,11 +155,75 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "properties".
+ */
+export interface Property {
+  id: number;
+  apex27Id?: string | null;
+  slug?: string | null;
+  title?: string | null;
+  displayAddress?: string | null;
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  area?: string | null;
+  town?: string | null;
+  county?: string | null;
+  postcode?: string | null;
+  location?: {
+    lat?: number | null;
+    lng?: number | null;
+  };
+  listingType?: ('sale' | 'rent' | 'commercial' | 'unknown') | null;
+  propertyType?: string | null;
+  status?: ('available' | 'under-offer' | 'sold' | 'let-agreed' | 'let' | 'withdrawn' | 'unknown') | null;
+  price?: number | null;
+  priceLabel?: string | null;
+  rentFrequency?: string | null;
+  beds?: number | null;
+  baths?: number | null;
+  receptions?: number | null;
+  summary?: string | null;
+  features?:
+    | {
+        value?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  imageUrls?:
+    | {
+        url?: string | null;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  floorplanUrls?:
+    | {
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  virtualTourUrl?: string | null;
+  epcUrl?: string | null;
+  publicListing?: boolean | null;
+  agentName?: string | null;
+  agentPhone?: string | null;
+  branchId?: string | null;
+  sourceHash?: string | null;
+  syncedAt?: string | null;
+  active?: boolean | null;
+  featured?: boolean | null;
+  editorialNote?: string | null;
+  heroImage?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
-  alt: string;
+  id: number;
+  alt?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -163,10 +238,146 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guides".
+ */
+export interface Guide {
+  id: number;
+  title: string;
+  slug: string;
+  category?: ('Selling' | 'Letting' | 'Buying') | null;
+  publishedAt?: string | null;
+  standfirst?: string | null;
+  image?: (number | null) | Media;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  title: string;
+  slug: string;
+  group?: ('selling' | 'letting' | 'sourcing' | 'properties' | 'about') | null;
+  intro?:
+    | {
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  sections?:
+    | {
+        heading?: string | null;
+        blocks?:
+          | (
+              | {
+                  text?: string | null;
+                  id?: string | null;
+                  blockName?: string | null;
+                  blockType: 'para';
+                }
+              | {
+                  text?: string | null;
+                  id?: string | null;
+                  blockName?: string | null;
+                  blockType: 'subheading';
+                }
+              | {
+                  items?:
+                    | {
+                        text?: string | null;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  id?: string | null;
+                  blockName?: string | null;
+                  blockType: 'bullets';
+                }
+              | {
+                  rows?:
+                    | {
+                        cells?:
+                          | {
+                              value?: string | null;
+                              id?: string | null;
+                            }[]
+                          | null;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  id?: string | null;
+                  blockName?: string | null;
+                  blockType: 'table';
+                }
+            )[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  faqs?:
+    | {
+        q?: string | null;
+        a?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  heroImage?: (number | null) | Media;
+  devNotes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members".
+ */
+export interface TeamMember {
+  id: number;
+  name: string;
+  role?: string | null;
+  firm?: ('Trent Estate Agents' | 'Trent Law Solicitors' | 'Trent Finance') | null;
+  photo?: (number | null) | Media;
+  bio?: string | null;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  quote: string;
+  firstName?: string | null;
+  area?: string | null;
+  month?: string | null;
+  service?: ('Sale' | 'Letting' | 'Fully Managed' | 'Conveyancing' | 'Sourcing' | 'Auction') | null;
+  attributionConfirmed?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -183,20 +394,40 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
+      } | null)
+    | ({
+        relationTo: 'properties';
+        value: number | Property;
+      } | null)
+    | ({
+        relationTo: 'guides';
+        value: number | Guide;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'team-members';
+        value: number | TeamMember;
+      } | null)
+    | ({
+        relationTo: 'testimonials';
+        value: number | Testimonial;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -206,10 +437,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -229,7 +460,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -247,6 +478,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -256,6 +488,193 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "properties_select".
+ */
+export interface PropertiesSelect<T extends boolean = true> {
+  apex27Id?: T;
+  slug?: T;
+  title?: T;
+  displayAddress?: T;
+  addressLine1?: T;
+  addressLine2?: T;
+  area?: T;
+  town?: T;
+  county?: T;
+  postcode?: T;
+  location?:
+    | T
+    | {
+        lat?: T;
+        lng?: T;
+      };
+  listingType?: T;
+  propertyType?: T;
+  status?: T;
+  price?: T;
+  priceLabel?: T;
+  rentFrequency?: T;
+  beds?: T;
+  baths?: T;
+  receptions?: T;
+  summary?: T;
+  features?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
+  imageUrls?:
+    | T
+    | {
+        url?: T;
+        caption?: T;
+        id?: T;
+      };
+  floorplanUrls?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
+  virtualTourUrl?: T;
+  epcUrl?: T;
+  publicListing?: T;
+  agentName?: T;
+  agentPhone?: T;
+  branchId?: T;
+  sourceHash?: T;
+  syncedAt?: T;
+  active?: T;
+  featured?: T;
+  editorialNote?: T;
+  heroImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guides_select".
+ */
+export interface GuidesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  category?: T;
+  publishedAt?: T;
+  standfirst?: T;
+  image?: T;
+  body?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  group?: T;
+  intro?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  sections?:
+    | T
+    | {
+        heading?: T;
+        blocks?:
+          | T
+          | {
+              para?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                    blockName?: T;
+                  };
+              subheading?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                    blockName?: T;
+                  };
+              bullets?:
+                | T
+                | {
+                    items?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                    blockName?: T;
+                  };
+              table?:
+                | T
+                | {
+                    rows?:
+                      | T
+                      | {
+                          cells?:
+                            | T
+                            | {
+                                value?: T;
+                                id?: T;
+                              };
+                          id?: T;
+                        };
+                    id?: T;
+                    blockName?: T;
+                  };
+            };
+        id?: T;
+      };
+  faqs?:
+    | T
+    | {
+        q?: T;
+        a?: T;
+        id?: T;
+      };
+  heroImage?: T;
+  devNotes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members_select".
+ */
+export interface TeamMembersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  firm?: T;
+  photo?: T;
+  bio?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  quote?: T;
+  firstName?: T;
+  area?: T;
+  month?: T;
+  service?: T;
+  attributionConfirmed?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

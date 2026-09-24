@@ -10,7 +10,15 @@ const nextConfig: NextConfig = {
   images: {
     localPatterns: [
       {
-        pathname: '/api/media/file/**',
+        // pathname: '/api/media/file/**',
+        pathname: '/assets/**',
+      },
+    ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+        pathname: '/**',
       },
     ],
   },
@@ -22,6 +30,9 @@ const nextConfig: NextConfig = {
     }
 
     return webpackConfig
+  },
+  experimental: {
+    turbopackServerFastRefresh: true,
   },
   turbopack: {
     root: path.resolve(dirname),
