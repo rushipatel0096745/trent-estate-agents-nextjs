@@ -23,6 +23,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
   collections: [Users, Properties, Guides, Pages, TeamMembers, Testimonials, Media],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -32,6 +33,7 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
+      max: 1,
     },
   }),
   sharp,

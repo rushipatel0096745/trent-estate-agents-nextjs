@@ -163,5 +163,21 @@ export async function getProperties(filters: PropertyFilters = {}) {
     },
   })
 
-  return result.docs
+  return result.docs.map((doc): PropertyCard => ({
+    id: String(doc.id),
+    slug: doc.slug ?? '',
+    title: doc.title ?? '',
+    displayAddress: doc.displayAddress ?? '',
+    area: doc.area ?? null,
+    priceLabel: doc.priceLabel ?? null,
+    price: doc.price ?? null,
+    rentFrequency: doc.rentFrequency ?? null,
+    listingType: doc.listingType ?? '',
+    propertyType: doc.propertyType ?? null,
+    status: doc.status ?? '',
+    beds: doc.beds ?? null,
+    baths: doc.baths ?? null,
+    imageUrls: (doc.imageUrls as PropertyCard['imageUrls']) ?? null,
+    heroImage: doc.heroImage,
+  }))
 }
