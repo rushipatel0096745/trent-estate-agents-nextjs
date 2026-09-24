@@ -23,7 +23,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'https://trent-estate-agents-nextjs.vercel.app',
   collections: [Users, Properties, Guides, Pages, TeamMembers, Testimonials, Media],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
